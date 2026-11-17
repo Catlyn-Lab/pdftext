@@ -30,6 +30,10 @@ type Doc struct {
 	data  unsafe.Pointer
 	pages int
 	fonts map[int]*fontInfo // FontInfos: the fonts InsertText and InsertTextbox installed, by xref
+	// balanced holds the pages a commit has written to: their content's q/Q
+	// are balanced since (every commit appends a balanced chunk, and the first
+	// one balances what the page had), so the next commit need not count them.
+	balanced map[int]bool
 }
 
 // Open opens a PDF from memory. The bytes are copied, so data may be reused.
