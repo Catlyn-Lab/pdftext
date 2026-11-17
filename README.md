@@ -35,7 +35,7 @@ for i := 0; i < doc.Pages(); i++ {
 }
 ```
 
-A `Doc` is not safe for concurrent use: open one per goroutine. `SortedText(words)` is the sort on its own, for words you already have. Where PyMuPDF raises `ZeroDivisionError` (a word or line with no width or height), `Sorted` returns `ErrNoSize`.
+A `Doc` is not safe for concurrent use: open one per goroutine. Separate `Doc`s, `PDFWriter`s and `StoryPDF` calls may run in as many goroutines as you like: MuPDF's one lock that guards what it keeps for the whole process, `FZ_LOCK_FREETYPE` (the HarfBuzz glue a Story layout shapes text through), is a real mutex shared by every context (`nx_locks.c`, `TestConcurrentUse`). `SortedText(words)` is the sort on its own, for words you already have. Where PyMuPDF raises `ZeroDivisionError` (a word or line with no width or height), `Sorted` returns `ErrNoSize`.
 
 ### Everything it does, and PyMuPDF's name for it
 

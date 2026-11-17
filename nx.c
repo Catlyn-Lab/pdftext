@@ -232,7 +232,7 @@ static int has_image(fz_context *ctx, pdf_document *pdf, int pno) {
 static void silent(void *user, const char *message) {}
 
 fz_context *nx_new_context(void) {
-	fz_context *ctx = fz_new_context(NULL, NULL, FZ_STORE_DEFAULT);
+	fz_context *ctx = fz_new_context(NULL, nx_locks(), FZ_STORE_DEFAULT);
 	if (!ctx) return NULL;
 	fz_set_warning_callback(ctx, silent, NULL);
 	fz_set_error_callback(ctx, silent, NULL);

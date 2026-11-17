@@ -42,6 +42,7 @@ typedef struct {
 typedef struct { nx_rect *boxes; int n, cap; int failed; } nx_boxes;
 
 fz_context *nx_new_context(void);
+fz_locks_context *nx_locks(void); // nx_locks.c: the mutexes every context shares
 fz_document *nx_open(fz_context *ctx, unsigned char *data, size_t len);
 int nx_count_pages(fz_context *ctx, fz_document *doc);
 void nx_read_page(fz_context *ctx, fz_document *doc, int pno, nx_page *out);
@@ -81,7 +82,8 @@ int nx_insert_font(fz_context *ctx, fz_document *doc, int pno, const char *ref, 
 	int serif, int *xref, char *name, int nname, float *asc, float *dsc, char *err, int nerr);
 int nx_glyph_widths(fz_context *ctx, const char *bfname, int limit, int *glyphs, float *adv);
 int nx_set_opacity(fz_context *ctx, fz_document *doc, int pno, const char *gs, float CA, float ca, char *err, int nerr);
-int nx_commit(fz_context *ctx, fz_document *doc, int pno, const char *data, size_t n, int overlay, char *err, int nerr);
+int nx_commit(fz_context *ctx, fz_document *doc, int pno, const char *data, size_t n, int overlay, int balanced,
+	char *err, int nerr);
 void nx_tobytes(fz_context *ctx, fz_document *doc, nx_json *out);
 void nx_extract_pages(fz_context *ctx, fz_document *doc, const int *pages, int n, nx_json *out);
 void nx_metadata(fz_context *ctx, fz_document *doc, nx_json *out);

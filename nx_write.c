@@ -246,7 +246,12 @@ static void add_text_contents(fz_context *ctx, pdf_document *pdf, pdf_obj *page,
 // nx_commit is Shape.commit: with overlay, the page's graphics state
 // balanced first (wrap_contents); then the content as a new stream, flate
 // compressed when that makes it smaller (update_stream).
-int nx_commit(fz_context *ctx, fz_document *doc, int pno, const char *data, size_t n, int overlay, char *err, int nerr) {
+// balanced says the page's content is known to have balanced q/Q (it was
+// last written by a commit), so the count Shape.commit makes first, which
+// rereads every content stream of the page, is skipped: it would find
+// nothing to add. The bytes written are the same either way.
+int nx_commit(fz_context *ctx, fz_document *doc, int pno, const char *data, size_t n, int overlay, int balanced,
+	char *err, int nerr) {
 	pdf_document *pdf = pdf_specifics(ctx, doc);
 	fz_buffer *buf = NULL, *z = NULL, *blank = NULL;
 	pdf_obj *ref = NULL;
@@ -255,7 +260,7 @@ int nx_commit(fz_context *ctx, fz_document *doc, int pno, const char *data, size
 	fz_try(ctx) {
 		need_pdf(ctx, pdf);
 		pdf_obj *page = pdf_lookup_page_obj(ctx, pdf, pno);
-		if (overlay) {
+		if (overlay && !balanced) {
 			int push = 0, pop = 0;
 			pdf_count_q_balance(ctx, pdf, pdf_dict_get(ctx, page, PDF_NAME(Resources)),
 				pdf_dict_get(ctx, page, PDF_NAME(Contents)), &push, &pop);

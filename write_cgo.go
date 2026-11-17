@@ -149,10 +149,18 @@ func (d *Doc) commit(n int, cont string, background bool) error {
 	if background {
 		ov = 0
 	}
+	known := C.int(0)
+	if d.balanced[n] {
+		known = 1
+	}
 	var e [256]C.char
-	if C.nx_commit(d.ctx, d.doc, C.int(n), c, C.size_t(len(cont)), ov, &e[0], 256) != 0 {
+	if C.nx_commit(d.ctx, d.doc, C.int(n), c, C.size_t(len(cont)), ov, known, &e[0], 256) != 0 {
 		return d.cerr(e[:])
 	}
+	if d.balanced == nil {
+		d.balanced = map[int]bool{}
+	}
+	d.balanced[n] = true
 	return nil
 }
 
