@@ -6,10 +6,11 @@ Usage: python scripts/pymupdf_write_golden.py testdata
 Each case is a list of operations on a document: fitz.open() or a test PDF,
 new_page, draw_rect, draw_line, insert_text, insert_textbox, a Story laid
 out through a DocumentWriter (as the HTML-to-PDF engine does, then
-reopened), metadata and set_metadata, a page subset as a new PDF, and
-Font.text_length. One JSON line per case: each operation's return value, and
-the resulting PDF's pages: their text (get_text()) and the SHA-256 of their
-pixels drawn at 72 DPI. The PDF bytes themselves are not compared; pdftext's
+reopened), one Story with no user CSS laid out page after page (StoryPDF),
+metadata and set_metadata, a page subset as a new PDF, and Font.text_length.
+One JSON line per case: each operation's return value, and the resulting
+PDF's pages: their text (get_text()) and the SHA-256 of their pixels drawn
+at 72 DPI. The PDF bytes themselves are not compared; pdftext's
 need not equal PyMuPDF's, only what they show.
 """
 import hashlib
@@ -74,6 +75,20 @@ def run(case, folder):
                     more, _ = story.place(fitz.Rect(op["rect"]))
                     story.draw(dev)
                     writer.end_page()
+            writer.close()
+            doc = fitz.open(stream=buf.getvalue(), filetype="pdf")
+        elif kind == "story_pdf":
+            # one Story, no user CSS (user_css=None), page after page:
+            # pdftext.StoryPDF
+            buf = io.BytesIO()
+            writer = fitz.DocumentWriter(buf)
+            story = fitz.Story(html=op["html"].replace("LONGTEXT", LONG), user_css=op.get("css"))
+            more = 1
+            while more:
+                dev = writer.begin_page(fitz.Rect(op["mediabox"]))
+                more, _ = story.place(fitz.Rect(op["rect"]))
+                story.draw(dev)
+                writer.end_page()
             writer.close()
             doc = fitz.open(stream=buf.getvalue(), filetype="pdf")
         elif kind == "metadata":

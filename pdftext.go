@@ -52,3 +52,10 @@ type Picture struct {
 	Width, Height int  // in pixels
 	White         bool // every pixel is white: the page draws nothing
 }
+
+// A4 is fitz.paper_rect("a4"), in points.
+var A4 = Box{0, 0, 595, 842}
+
+// maxStoryPages bounds StoryPDF: content that never fits its rectangle
+// would otherwise add pages for ever.
+const maxStoryPages = 10000

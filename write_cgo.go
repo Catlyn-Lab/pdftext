@@ -462,3 +462,51 @@ func (s *Story) Close() {
 		s.s = nil
 	}
 }
+
+// StoryPDF lays html (with css, "" for none) out page after page and
+// returns the PDF: PyMuPDF's
+//
+//	story = fitz.Story(html=html, user_css=css)
+//	writer = fitz.DocumentWriter(buf)
+//	more = 1
+//	while more:
+//	    dev = writer.begin_page(mediabox)
+//	    more, _ = story.place(where)
+//	    story.draw(dev)
+//	    writer.end_page()
+//	writer.close()
+//
+// It stops with an error after maxStoryPages pages, where PyMuPDF would
+// loop for ever on content that never fits where.
+func StoryPDF(html, css string, mediabox, where Box) ([]byte, error) {
+	w, err := NewPDFWriter()
+	if err != nil {
+		return nil, err
+	}
+	s, err := w.NewStory(html, css)
+	if err != nil {
+		w.Close()
+		return nil, err
+	}
+	for more, n := true, 0; more; n++ {
+		if n == maxStoryPages {
+			s.Close()
+			w.Close()
+			return nil, fmt.Errorf("pdftext: story still not placed after %d pages", maxStoryPages)
+		}
+		if err = w.BeginPage(mediabox); err == nil {
+			if more, _, err = s.Place(where); err == nil {
+				if err = s.Draw(); err == nil {
+					err = w.EndPage()
+				}
+			}
+		}
+		if err != nil {
+			s.Close()
+			w.Close()
+			return nil, err
+		}
+	}
+	s.Close()
+	return w.Close()
+}

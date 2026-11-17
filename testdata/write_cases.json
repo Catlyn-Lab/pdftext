@@ -31,6 +31,7 @@
     {"op": "insert_textbox", "page": 0, "rect": [56, 790, 297.5, 820], "text": "Fund report", "fontname": "helv", "fontsize": 8, "color": [0.3, 0.3, 0.3]},
     {"op": "insert_textbox", "page": 0, "rect": [297.5, 790, 539, 820], "text": "p. 1 / N", "fontname": "helv", "fontsize": 8, "color": [0.3, 0.3, 0.3], "align": 2}
   ]},
+  {"name": "story_pdf", "ops": [{"op": "story_pdf", "mediabox": [0, 0, 595, 842], "rect": [36, 36, 559, 806], "html": "<h1 style=\"text-align:center\">Rulebook</h1>\n<p style=\"text-align:center\"><b>Policies and procedures</b></p>\n<h2>1. Scope</h2>\n<p style=\"text-align:justify\">This rulebook applies to every entity of the group. A clause may quote a formula such as <i>NAV &lt; 0 &amp;&amp; cash &gt; 0</i>, and its text stays text.</p>\n<p><b><i><u>R1.1</u></i></b>\tThe fund manager reviews the books each quarter.<br/>Second line of the same paragraph.</p>\n<p style=\"text-align:right\">Approved by the board</p>\n<h3>1.1 Languages</h3>\n<p>진성 인터내셔널의 규정집입니다. 当ファンドは東京の不動産に投資します。</p>\n<table><tr><td><b>Rule</b></td><td><b>Owner</b></td><td>Notes</td></tr><tr><td>R1.1</td><td>Finance<br/>Operations</td><td></td></tr><tr><td>R1.2</td><td>Legal</td><td>Reviewed yearly - see R1.1</td></tr></table>\n<h2>2. Clauses</h2>\nLONGTEXT"}]},
   {"name": "metadata", "ops": [
     {"op": "open", "file": "images.pdf"},
     {"op": "metadata"},

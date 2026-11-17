@@ -32,6 +32,7 @@ type writeOp struct {
 	FillOp   *float64          `json:"fill_opacity"`
 	Mediabox []float64         `json:"mediabox"`
 	CSS      string            `json:"css"`
+	HTML     string            `json:"html"`
 	Groups   []string          `json:"groups"`
 	Meta     map[string]string `json:"meta"`
 	Pages    []int             `json:"pages"`
@@ -173,6 +174,10 @@ func runCase(t *testing.T, ops []writeOp) ([]any, []byte) {
 				s.Close()
 			}
 			data, err := w.Close()
+			must(err)
+			reopen(data)
+		case "story_pdf":
+			data, err := StoryPDF(strings.ReplaceAll(op.HTML, "LONGTEXT", longText), op.CSS, box(op.Mediabox), box(op.Rect))
 			must(err)
 			reopen(data)
 		case "metadata":
